@@ -37,7 +37,7 @@ class TicketImport implements ToModel
 
         static $airlines = null;
         static $destinations = null;
-    
+
         if ($airlines === null) {
             // build map: code => id
             $airlines = Airline::pluck('id', 'code')->toArray();
@@ -56,6 +56,9 @@ class TicketImport implements ToModel
                 $name_list_date = Carbon::parse(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[4]))->subDays($row[13]);
                 $airlineId = $airlines[trim($row[1])] ?? null;
                 $destinationId = $destinations[trim($row[0])] ?? null;
+                if(!$destinationId){
+                   throw new Exception("Destination is not available ".$row[0]);
+                }
 
                 $start_time =  strtotime(Carbon::parse(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject(trim($row[5])))->format('H:i'));
                 $end_time   =  strtotime(Carbon::parse(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject(trim($row[6])))->format('H:i'));
@@ -98,7 +101,7 @@ class TicketImport implements ToModel
                     'isOnline' => 1, // offliine
                     'baggage_info' => json_encode($baggage_info),
                     'created_at' => now(),
-'updated_at' => now(),
+                    'updated_at' => now(),
                 ];
 
                 self::$buffer[] = $data;
