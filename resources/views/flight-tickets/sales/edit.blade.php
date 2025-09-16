@@ -39,7 +39,7 @@ rel="stylesheet"
                 <div class="row">
 
                     <div class="col-md-4">
-                    
+
                     </div>
                     <div class="col-md-4">
                         <div class="form-group ">
@@ -61,7 +61,17 @@ rel="stylesheet"
                     <div class="col-md-4">
                         <div class="form-group ">
                             <label for="">Airline and PNR No</label>
-                            <input type="text" class="form-control form-control-sm" readonly="" name="pnr_no" value="{{ $data->airline }} - {{ implode(",",json_decode($data->pnr,true)) }}">
+                            @php
+                                $pnr = json_decode($data->pnr, true);
+
+                                if (is_array($pnr)) {
+                                    $pnrValue = implode(",", $pnr);
+                                } else {
+                                    $pnrValue = $data->pnr; // fallback to string
+                                }
+                            @endphp
+
+                            <input type="text" class="form-control form-control-sm" readonly="" name="pnr_no" value="{{ $data->airline }} - {{ $pnrValue }}">
 
                         </div>
                     </div>
