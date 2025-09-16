@@ -790,7 +790,12 @@ class BookingController extends Controller
         }
 
         $serialNo->update(['count' => $next_serial]);
-        $formated =  str_pad($next_serial, 6, "0", STR_PAD_LEFT);
-        return  'VT-' . $formated;
+
+
+
+        // ✅ Convert to base36 (0-9 + A-Z), then uppercase and pad to 8 chars
+        $alphaNum = strtoupper(base_convert($next_serial, 10, 36));
+        $formatted = str_pad($alphaNum, 8, '0', STR_PAD_LEFT);
+        return  'VT-' . $formatted;
     }
 }
