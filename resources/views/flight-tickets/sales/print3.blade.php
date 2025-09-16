@@ -488,7 +488,7 @@
                                                         </tr>
                                                         <tr>
                                                             <td class="py-05 px-2">
-                                                               
+
                                                                 {{ $data->airline }}
                                                             </td>
                                                             <td class="py-05 px-2">
@@ -511,12 +511,12 @@
                                                                 {{-- Terminal - T3<br> --}}
                                                                 {{ \Carbon\Carbon::parse($data->arrivalDate)->format('Y-m-d') }}  {{ \Carbon\Carbon::parse($data->arrivalDate)->format('H:i:s') }}
                                                                 @endif
-                                                               
+
                                                             </td>
                                                             <td class="py-05 px-2">
                                                                 Non Stop<br>
                                                                 <strong>Non-Refundable</strong><br>
-                                                              
+
                                                             </td>
                                                         </tr>
                                                     </table>
@@ -585,60 +585,68 @@
                                                                 <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                                                     <tr>
                                                                         <td>
-                                                                            <table role="presentation" border="0" cellpadding="0" cellspacing="0">
-                                                                                <tr>
-                                                                                    <td class="py-05 px-1 border-bottom border-dark" colspan="4">Flight Inclusions </td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="py-05 px-1 bg-gray">Baggage</td>
-                                                                                    <td class="py-05 px-1 bg-gray">Adult</td>
-                                                                                    <td class="py-05 px-1 bg-gray">Child</td>
-                                                                                    <td class="py-05 px-1 bg-gray">Infant</td>
-                                                                                </tr>
+                                                                           <table role="presentation" border="0" cellpadding="0" cellspacing="0">
+                                                                            <tr>
+                                                                            <td class="py-05 px-1 border-bottom border-dark" colspan="4">Flight Inclusions</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                            <td class="py-05 px-1 bg-gray">Baggage</td>
+                                                                            <td class="py-05 px-1 bg-gray">Adult</td>
+                                                                            <td class="py-05 px-1 bg-gray">Child</td>
+                                                                            <td class="py-05 px-1 bg-gray">Infant</td>
+                                                                            </tr>
+
                                                                                 @php
-                                                                                $baggage_info = json_decode($purchase_entry->baggage_info);
-                                                                                $originCountryCode = $purchase_entry->destination->origin->countryCode;
-                                                                                $destinationCountryCode = $purchase_entry->destination->destination->countryCode;
+                                                                                    $raw_baggage = json_decode($purchase_entry->baggage_info, true);
+
+                                                                                    $baggage_info = [];
+
+                                                                                    if (!empty($raw_baggage)) {
+                                                                                        $baggage_info[] = [
+                                                                                            'type'   => 'Cabin Baggage',
+                                                                                            'adult'  => $raw_baggage['cabin_baggage'] ?? '0 Kg',
+                                                                                            'child'  => $raw_baggage['cabin_baggage'] ?? '0 Kg',
+                                                                                            'infant' => '0 Kg',
+                                                                                        ];
+
+                                                                                        $baggage_info[] = [
+                                                                                            'type'   => 'Check-in Baggage',
+                                                                                            'adult'  => $raw_baggage['checkin_baggage'] ?? '0 Kg',
+                                                                                            'child'  => $raw_baggage['checkin_baggage'] ?? '0 Kg',
+                                                                                            'infant' => '0 Kg',
+                                                                                        ];
+                                                                                    }
                                                                                 @endphp
-                                                                                 @if($baggage_info)
-                                                                                 @foreach($baggage_info as $i => $val)
-                                                                                     @php
-                                                                                     if($originCountryCode == 'IN' && $destinationCountryCode == 'IN') {
-                                                                                         if($val->mode == 'international') {
-                                                                                             continue;
-                                                                                         }
-                                                                                     }else{
-                                                                                         if($val->mode == 'domestic') {
-                                                                                             continue;
-                                                                                         }
-                                                                                     }
-                                                                                     @endphp
-                                                                                <tr>
-                                                                                    <td class="py-05 px-1">{{$val->type}}</td>
-                                                                                    <td class="py-05 px-1">{{$val->adult}}</td>
-                                                                                    <td class="py-05 px-1">{{$val->child}}</td>
-                                                                                    <td class="py-05 px-1">{{$val->infant}}</td>
-                                                                                </tr>
-                                                                                @endforeach
+
+                                                                                @if(!empty($baggage_info))
+                                                                                    @foreach($baggage_info as $val)
+                                                                                        <tr>
+                                                                                        <td class="py-05 px-1">{{ $val['type'] }}</td>
+                                                                                        <td class="py-05 px-1">{{ $val['adult'] }}</td>
+                                                                                        <td class="py-05 px-1">{{ $val['child'] }}</td>
+                                                                                        <td class="py-05 px-1">{{ $val['infant'] }}</td>
+                                                                                        </tr>
+                                                                                    @endforeach
                                                                                 @else
-                                                                                <tr>
+                                                                                    <tr>
                                                                                     <td class="pb-05 px-1">Cabin Baggage</td>
                                                                                     <td class="pb-05 px-1">7kg</td>
                                                                                     <td class="pb-05 px-1">7kg</td>
                                                                                     <td class="pb-05 px-1">0 Kg</td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                    <td class="pb-05 px-1">Check-in Baggage </td>
-                                                                                    <td class="pb-05 px-1">15kg </td>
-                                                                                    <td class="pb-05 px-1">15kg </td>
+                                                                                    </tr>
+                                                                                    <tr>
+                                                                                    <td class="pb-05 px-1">Check-in Baggage</td>
+                                                                                    <td class="pb-05 px-1">15kg</td>
+                                                                                    <td class="pb-05 px-1">15kg</td>
                                                                                     <td class="pb-05 px-1">0 Kg</td>
-                                                                                </tr>
-                                                                                @endif
+                                                                                    </tr>
+                                                                                  @endif
+
                                                                                 <tr>
-                                                                                    <td class="pt-1 px-1 pb-1 border-top border-dark" colspan="4">
-                                                                                        <span class="font-sm">* Flight inclusions are subject to change with Airlines</span>
-                                                                                    </td>
-                                                                                </tr>
+                                                                            <td class="pt-1 px-1 pb-1 border-top border-dark" colspan="4">
+                                                                            <span class="font-sm">* Flight inclusions are subject to change with Airlines</span>
+                                                                            </td>
+                                                                            </tr>
                                                                             </table>
                                                                         </td>
                                                                     </tr>
