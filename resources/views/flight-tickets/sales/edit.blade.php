@@ -44,14 +44,14 @@ rel="stylesheet"
                     <div class="col-md-4">
                         <div class="form-group ">
                             <label for="">Email Id </label>
-                            <input type="text" class="form-control form-control-sm" readonly="" name="email" id="email" value="{{ $data->email }}">
+                            <input type="text" class="form-control form-control-sm" readonly="" name="email" id="email" value="{{ $agent->email }}">
 
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group ">
                             <label for="">Mobile No</label>
-                            <input type="text" class="form-control form-control-sm" readonly="" name="mobile" id="mobile" value="{{ $data->phone }}">
+                            <input type="text" class="form-control form-control-sm" readonly="" name="mobile" id="mobile" value="{{ $agent->phone }}">
                         </div>
 
                     </div>
@@ -188,7 +188,6 @@ rel="stylesheet"
                     </tbody>
                 </table>
                 <hr>
-                <!-- Child Details end -->
                 <!-- Infant Details start -->
                 <h6 class="text-uppercase row">
                     <div class="col-md-6">
@@ -208,17 +207,13 @@ rel="stylesheet"
                             <th width="30%">Last Name</th>
                             <th width="30%">DOB</th>
                             <th width="30%">Travelling With</th>
+                            <th>Edit</th>
                         </tr>
                     </thead>
                     <tbody id="InfantListBody">
-
-
-
-                    <tbody id="InfantListBody">
                         @foreach($book_details->where('type',3) as $key => $val)
-                        <tr>
-
-                            <input type="hidden" name="infant_id[]" value="{{ $val->id }}">
+                        <tr @if($val->is_refund == 1) class="bg-red" @endif data-id="{{$val->id}}">
+                            <input type="hidden" name="infant_id[]" value="{{ $val->id }}" class="id">
                             <td>
                                 <select name="infant_title[]" id="agent_id" class="form-control form-control-sm" required>
                                     <option value="Master" @if($val->title == 'Master') selected @endif> Master</option>
@@ -226,25 +221,22 @@ rel="stylesheet"
 
                                 </select>
                             </td>
-                            <td><input type="text" class="form-control form-control-sm" name="infant_first_name[]" value="{{ $val->first_name }}" required /></td>
-                            <td><input type="text" class="form-control form-control-sm" name="infant_last_name[]" value="{{ $val->last_name }}" required /></td>
+                            <td><input type="text" class="form-control form-control-sm first_name" name="infant_first_name[]" value="{{ $val->first_name }}" required /></td>
+                            <td><input type="text" class="form-control form-control-sm last_name" name="infant_last_name[]" value="{{ $val->last_name }}" required /></td>
 
 
-                            <td><input type="date" class="form-control form-control-sm" name="infant_dob[]" value="{{ date('Y-m-d', strtotime($val->dob)) }}" required /></td>
-                            <td><input type="text" class="form-control form-control-sm" name="infant_travelling_with[]" required value="{{ $val->travelling_with }}" /></td>
-
-
-
-
+                            <td><input type="date" class="form-control form-control-sm dob" name="infant_dob[]" value="{{ date('Y-m-d', strtotime($val->dob)) }}" required /></td>
+                            <td><input type="text" class="form-control form-control-sm" name="infant_travelling_with[]" required value="{{ $val->travelling_with }}"  readonly/></td>
+                            <td style="width:100px">
+                                <button type="button" class="btn btn-info btn-sm update-pax-name">Update</button>
+                            </td>
                         </tr>
                         @endforeach
-
 
                     </tbody>
                 </table>
 
                 <!-- Infant Details end -->
-
 
                 <hr>
                 <div class="form-group row">
@@ -284,8 +276,6 @@ rel="stylesheet"
                 <div class="form-group row">
                     <div class="col-md-4">
                     </div>
-
-
 
 
                 </div>

@@ -200,7 +200,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label for="">Infant</label>
-                                    <input type="number" class="form-control form-control-sm" step="0.01" id="infant_cost" value="{{ $data->infant }}" name="infant_charge">
+                                    <input type="number" class="form-control form-control-sm" step="0.01" id="infant_cost" value="{{ $data->infant }}" name="infant_charge" readonly>
 
                                 </div>
                             </div>

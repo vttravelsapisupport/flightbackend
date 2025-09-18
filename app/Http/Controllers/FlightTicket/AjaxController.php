@@ -755,18 +755,15 @@ class AjaxController extends Controller
     public function updatePaxName(Request $request){
 
         $book_details_id   = $request->get('book_details_id');
-        $first_name        = $request->get('first_name');
-        $title        = $request->get('title');
-        $last_name         = $request->get('last_name');
-        $dob                = $request->get('dob');
+        $bookTicket = BookTicketSummary::findOrFail($book_details_id);
 
-        BookTicketSummary::where('id', $book_details_id)->update([
-            'title' => $title,
-            'first_name' => $first_name,
-            'last_name'  => $last_name,
-            'dob' => $dob
-        ]);
+         $bookTicket->title      = $request->get('title');
+         $bookTicket->first_name = $request->get('first_name');
+         $bookTicket->last_name  = $request->get('last_name');
+         $bookTicket->dob        = $request->get('dob');
 
+        $bookTicket->save();
+        
         return response()->json([
             'success' => true,
             'message' => 'Success',

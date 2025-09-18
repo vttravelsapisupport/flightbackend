@@ -131,7 +131,7 @@
                     <input type="hidden" name="id[]" value="{{ $val->id }}">
                     @endforeach
                     <div class="row mb-3 collapse" id="collapseExample">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="input-group">
                                 <input type="text" class="form-control form-control-sm mr-3" name="flight_no" id="flight_no" placeholder="Enter the flight no" value="">
                                 <select name="owner_id" id="owner_id_second" class="form-control form-control-sm  select2">
@@ -143,7 +143,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="input-group">
                                     <input type="text" class="form-control form-control-sm mr-3" name="infant_price" id="infant_price" placeholder="infant price" value="">
                                 <input type="text" class="form-control form-control-sm mr-3" name="cost_price" id="cost_price" placeholder="cost price" value="">
@@ -151,17 +151,24 @@
                                 <input type="text" class="form-control form-control-sm" name="base_price" id="base_price" placeholder="base price" value="">
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="input-group">
+                                <input type="text" class="form-control form-control-sm mr-3" name="departure_time" id="departure_time" placeholder="Departure time" value="">
+                                <input type="text" class="form-control form-control-sm mr-3"  name="arrival_time" id="arrival_time" placeholder="Arrival time" value="">
+                            </div>
+                        </div>
                         <div class="col-md-3">
                             <div class="input-group">
-                                <input type="text" class="form-control form-control-sm mr-3" name="tax" id="tax" placeholder="Enter the tax" value="">
-
-                                <input type="text" class="form-control form-control-sm" name="arrival_time" id="arrival_time" placeholder="Arrival time" value="">
+                                <input type="text" class="form-control form-control-sm mr-3" name="checkin_baggage" id="checkin_baggage" placeholder="checkIn(KG)" value="">
+                                <input type="text" class="form-control form-control-sm mr-3" name="cabin_baggage" id="cabin_baggage" placeholder="Cabin(KG)" value="">
+                                <input type="text" class="form-control form-control-sm mr-3" name="cabin_baggage_count" id="cabin_baggage_count" placeholder="Cabin count" value="">
+                                <input type="text" class="form-control form-control-sm" name="checkin_baggage_count" id="checkin_baggage_count" placeholder="CheckIn count" value="">
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="input-group">
-                                <input type="text" class="form-control form-control-sm" name="departure_time" id="departure_time" placeholder="Departure time" value="">
+                                <input type="text" class="form-control form-control-sm mr-3" name="tax" id="tax" placeholder="Enter tax" value="">
                                 <select name="flight_status" id="flight_status" class="form-control form-control-sm ml-3">
                                     <option value="">Flight Status</option>
                                     <option value="1">IROP</option>

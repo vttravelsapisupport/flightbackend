@@ -207,6 +207,74 @@
                         </tr>
                     </tbody>
                 </table>
+
+                <hr>
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Change History</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead class="thead-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>User</th>
+                                    <th>IP</th>
+                                    <th>Created At</th>
+                                    <th>Old Data</th>
+                                    <th>New Data</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach($book_ticket_details as $summary)
+                                        @foreach($summary->audits as $key => $val)
+                                            <tr>
+                                                <td>{{ $loop->parent->iteration }}.{{ $loop->iteration }}</td>
+                                                <td>{{ optional($val->user)->first_name ?? '' }} {{ optional($val->user)->last_name ?? '' }}</td>
+                                                <td>{{ $val->ip_address ?? '-' }}</td>
+                                                <td>{{ $val->created_at->format('d-M-Y H:i:s') }}</td>
+                                                <td>
+                                                    @foreach($val->old_values as $field => $old)
+                                                        @if($field == 'is_refund')
+                                                            {{ $field }} : {{ $old ? 'Refunded' : 'Not Refunded' }} 
+                                                        @elseif($field == 'status')
+                                                            {{ $field }} :
+                                                            @if($old == 1) Active
+                                                            @elseif($old == 2) Cancelled
+                                                            @else {{ $old }}
+                                                            @endif 
+                                                        @else
+                                                            {{ $field }} : {{ $old }} 
+                                                        @endif
+                                                    @endforeach
+                                                </td>
+                                                <td>
+                                                    @foreach($val->new_values as $field2 => $new)
+                                                        @if($field2 == 'is_refund')
+                                                            {{ $field2 }} : {{ $new ? 'Refunded' : 'Not Refunded' }}
+                                                        @elseif($field2 == 'status')
+                                                            {{ $field2 }} :
+                                                            @if($new == 1) Active
+                                                            @elseif($new == 2) Cancelled
+                                                            @else {{ $new }}
+                                                            @endif 
+                                                        @else
+                                                            {{ $field2 }} : {{ $new }} 
+                                                        @endif
+                                                    @endforeach
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                     </div>
+                </div>
+
             </div>
         </div>
     </div>

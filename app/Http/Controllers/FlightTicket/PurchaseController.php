@@ -746,7 +746,15 @@ class PurchaseController extends Controller
         if ($request->has('infant_price') && $request->infant_price != '')
         $data['infant']  = $infant_price;
 
-
+        if ($request->has('cabin_baggage') || $request->has('checkin_baggage')) {
+            $baggage_info = [
+                'cabin_baggage'        => $request->cabin_baggage ? $request->cabin_baggage . 'KG' : null,
+                'checkin_baggage'      => $request->checkin_baggage ? $request->checkin_baggage . 'KG' : null,
+                'cabin_baggage_count'  => $request->cabin_baggage_count,
+                'checkin_baggage_count'=> $request->checkin_baggage_count,
+                ];
+            $data['baggage_info'] = json_encode($baggage_info);
+        }
 
         foreach($purchase_entry_ids as $key => $id) {
             $purchase = \App\PurchaseEntry::find($id);
