@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\FlightTicket;
 
+use App\User;
 use App\PurchaseEntry;
 use Illuminate\Http\Request;
 use App\Services\AgentService;
 use App\Services\CreditService;
+use App\Services\RefundService;
 use App\Services\SupplierService;
 use App\Models\FlightTicket\Agent;
 use App\Models\FlightTicket\Owner;
@@ -25,7 +27,6 @@ use App\Mail\SupplierCancelRequestApproval;
 use App\Models\FlightTicket\AirTicketRefunds;
 use App\Models\FlightTicket\BookTicketSummary;
 use App\Models\FlightTicket\Accounts\SupplierTransaction;
-use App\Services\RefundService;
 
 class TicketRefundController extends Controller
 {
@@ -64,7 +65,12 @@ class TicketRefundController extends Controller
             abort(403, "Ticket can't be refunded");
         }
         $data = BookTicket::find($cancelrequest->book_id);
-        $passenger_ids = json_decode($cancelrequest->passenger_ids);
+        $passenger_ids = $cancelrequest->passenger_ids;
+
+            if (is_string($passenger_ids)) {
+                $passenger_ids = json_decode($passenger_ids, true);
+            }
+
 
         return view('flight-tickets.refunds.refund', compact('data','passenger_ids'));
     }
@@ -284,36 +290,39 @@ class TicketRefundController extends Controller
 
 
 
-    public function seatsLive(Request $request) {
-
+    public function seatsLive(Request $request)
+    {
         $user_id = Auth::user()->id;
         $cancelRequest = CancellationRequest::find($request->id);
-        if($cancelRequest->status == 2 || $cancelRequest->status == 3 || $cancelRequest->status == 4) {
+
+        if ($cancelRequest->status == 2 || $cancelRequest->status == 3 || $cancelRequest->status == 4) {
             return response()->json(['success' => false, 'message' => 'Cannot live the seats']);
         }
+
         $bookingTicketDetail  = BookTicket::find($cancelRequest->book_id);
         $purchaseEntryDetail  = \App\PurchaseEntry::where('id', $bookingTicketDetail->purchase_entry_id)->first();
 
         $total_pax = $cancelRequest->passenger_ids;
-        $total_pax = json_decode($total_pax);
+        if (is_string($total_pax)) {
+            $total_pax = json_decode($total_pax, true);
+        }
 
         $total_adult = [];
-        foreach($total_pax as $value) {
+        foreach ($total_pax as $value) {
             $summary = BookTicketSummary::find($value);
-            if($summary->type == 1 || $summary->type == 2) {
-                array_push($total_adult, $value);
+            if ($summary->type == 1 || $summary->type == 2) {
+                $total_adult[] = $value;
             }
         }
 
         DB::beginTransaction();
-        try{
+        try {
+            BookTicketSummary::whereIn('id', $total_pax)->update(['is_refund' => 2]); 
 
-            BookTicketSummary::whereIn('id', $total_pax)->update(['is_refund' => 2]); // For seat live
-
-            $purchaseEntryDetail->decrement('sold',  count($total_adult));
+            $purchaseEntryDetail->decrement('sold', count($total_adult));
             $purchaseEntryDetail->increment('available', count($total_adult));
 
-            $cancelRequest->status = 4; // change status to seat live
+            $cancelRequest->status = 4; 
             $cancelRequest->owner_id = $user_id;
             $cancelRequest->save();
 
@@ -324,15 +333,11 @@ class TicketRefundController extends Controller
 
             $html = view('modal.cancel-rejection-remarks')->with('cancel_request_id', $request->id)->render();
             return response()->json(['success' => true, 'message' => $html]);
-
-        }catch(\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
-
-
-
 
     public function refundBooking(Request $request) {
 
@@ -502,4 +507,56 @@ class TicketRefundController extends Controller
 
         return redirect()->to('/flight-tickets/cancellations');
     }
+
+     public function createSeatLive(Request $request)
+    {
+        $this->validate($request, [
+            'book_ticket_id' => 'required|integer',
+            'seat_live' => 'required'
+        ]);
+
+        $data = BookTicket::find($request->book_ticket_id);
+        $cancellationCharge = RefundService::getAutoCancellationCharge($request->book_ticket_id);
+
+        return view('flight-tickets.refunds.seatLive', compact('data','cancellationCharge'));
+    }
+
+    public function RefundCancellationRequest(Request $request)
+{
+    $data = $request->all();
+
+    $user = auth()->user();
+    $agent = User::where('email', $user->email)->first();
+
+    if (!$agent) {
+        return response()->json([
+            "success" => false,
+            "message" => "No agent found for this user email ({$user->email})"
+        ], 404);
+    }
+
+    $data['user_id'] = $user->id;
+    $data['agent_id'] = $agent->id;
+    $data['status'] = 1;
+
+    // Use refund[] checkboxes as passenger_ids
+    $data['passenger_ids'] = $request->input('refund', []);
+
+        $resp = CancellationRequest::create([
+        'book_id'       => $request->ticket_id,
+        'user_id'       => $user->id,
+        'agent_id'      => $agent->id,
+        'status'        => 1,
+        'passenger_ids' => $request->input('refund', []),  
+        'agent_remarks' => $request->remarks,            
+    ]);
+
+
+    return response()->json([
+        "success" => true,
+        "message" => 'Successfully created cancellation request',
+    ]);
+}
+
+
 }

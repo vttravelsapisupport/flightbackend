@@ -134,11 +134,11 @@
                             $user = Auth::user();
                             $cl_pending = $user->pendingCancelRequest()
                         @endphp
-                            <!-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a class="nav-link" href="{{ route('cancellations.index') }}">Cancellations
                                     <span class="badge badge-light">{{ $cl_pending }}</span>
                                 </a>
-                            </li> -->
+                            </li>
 
                         @endcan
                     </ul>

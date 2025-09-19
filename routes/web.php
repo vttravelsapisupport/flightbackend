@@ -175,15 +175,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('ticket-services-delete', 'TicketServiceController@showDeletePage');
         Route::post('ticket-services-delete/{id}', 'TicketServiceController@submitDeleteForm');
 
-
         //Refund
         Route::resource('refunds', RefundController::class);
-
 
         Route::get('/refund-booking', [TicketRefundController::class, 'refund']);
         Route::post('/refund-booking/live-seats', [TicketRefundController::class, 'seatsLive']);
         Route::post('/refund-booking/refund', [TicketRefundController::class, 'refundBooking']);
         Route::resource('refund-ticket', TicketRefundController::class);
+
+        Route::get('/refund-booking/seatLive', [TicketRefundController::class, 'createSeatLive']);
+        Route::post('/refund-booking/cancellation-request', [TicketRefundController::class, 'RefundCancellationRequest'])->name('refund-cancellation-request');
 
         // cancellations
         Route::GET('/cancellations', [CancellationRequestController::class, 'index'])->name('cancellations.index');
@@ -195,7 +196,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         // cancellation Request
         Route::get('/cancel-request/{id}', [CancellationRequestController::class, 'update']);
-        Route::post('/cancel-request-view', [CancellationRequestController::class, 'show']);
+        Route::get('/cancel-request-view', [CancellationRequestController::class, 'show']);
         Route::post('/cancel-request-remarks', [CancellationRequestController::class, 'updateRemarks'])->name('update-remarks');
         Route::post('/cancel-request-approved', [CancellationRequestController::class, 'cancelRequestApproved'])->name('request-approve');
 

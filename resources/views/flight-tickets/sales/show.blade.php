@@ -25,6 +25,7 @@
                             <a class="dropdown-item" href="{{ url('/flight-tickets/refund-ticket/create?book_ticket_id='.$data->id)}}">Refund</a>
                             <a class="dropdown-item" href="{{ url('/flight-tickets/sales/'.$data->id.'/services')}}">Services</a>
                             <a class="dropdown-item" href="{{ url('flight-tickets/sales/initimation/'.$data->id)}}">Intimation</a>
+                            <a class="dropdown-item" href="{{ url('/flight-tickets/refund-booking/seatLive?book_ticket_id='.$data->id.'&seat_live=true')}}">Seat Live Request</a>
                             <!-- <a class="dropdown-item" href="{{ url('flight-tickets/pnr-name-list/'.$data->purchase_entry_id)}}">Namelist</a> -->
                         </div>
                     </div>
