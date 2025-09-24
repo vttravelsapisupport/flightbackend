@@ -71,7 +71,7 @@
                         @endcan
                     </div>
 
-                    
+
                 </div>
                 <div class="row mt-3">
                 <div class="table-sorter-wrapper col-lg-12 table-responsive">
@@ -94,7 +94,7 @@
                                     <th>Booking Date</th>
                                     <th>Booking Source</th>
                                     <th>Status</th>
-                                   
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -102,7 +102,7 @@
                                     <tr>
                                         <th colspan="18" class="text-center">No Record Found</th>
                                     </tr>
-                                   
+
                                 @else
                                     @foreach($data as $item)
                                         <tr>
@@ -117,13 +117,13 @@
                                                 {{  $item->pnr }}
                                             </td>
                                             <td>{{ $item->trip_type == 1 ? 'One Way' : 'Round Trip' }}</td>
-                                            <td>{{ (int)($item->adults ?? 0) + (int)($item->infants ?? 0) }}</td>
+                                            <td>{{ (int)($item->adults ?? 0) + (int)($item->infants ?? 0)   + (int) ($item->child ?? 0) }} </td>
                                             <td>{{ $item->total_amount  }}</td>
                                             <td>{{ $item->infants  }}</td>
                                             <td>{{ $item->infant_charge  }}</td>
                                             <td>
                                                 @if($item->departureDate)
-                                                    {{ \Carbon\Carbon::parse($item->departureDate)->format('d-m-Y H:i ') }} 
+                                                    {{ \Carbon\Carbon::parse($item->departureDate)->format('d-m-Y H:i ') }}
                                                 @else
                                                     N/A
                                                 @endif
