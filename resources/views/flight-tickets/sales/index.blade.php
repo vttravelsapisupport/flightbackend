@@ -113,9 +113,7 @@
                                             <td>{{ $item->bill_no  }}</td>
                                             <td>{{ $item->src  }} </td>
                                             <td>{{ $item->dest  }}</td>
-                                            <td>
-                                                {{  $item->pnr }}
-                                            </td>
+                                            <td>{{  $item->pnr }}</td>
                                             <td>{{ $item->trip_type == 1 ? 'One Way' : 'Round Trip' }}</td>
                                             <td>{{ (int)($item->adults ?? 0) + (int)($item->infants ?? 0)   + (int) ($item->child ?? 0) }} </td>
                                             <td>{{ $item->total_amount  }}</td>
