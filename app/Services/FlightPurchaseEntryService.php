@@ -12,6 +12,7 @@ class FlightPurchaseEntryService
     Public static function clearSearchResultForCache($purchaseEntryList)
     {
         $keysToDeleteFromCache = [];
+        $cachePrefix = config('cache.prefix');
         foreach($purchaseEntryList as $key => $pe){
               $sector = DestinationService::getOrginAndDestinationCodeFromDestinationId($pe->destination_id);
 
@@ -20,7 +21,7 @@ class FlightPurchaseEntryService
                   $sector['destination'],
                   $pe->travel_date->format('Y-m-d'),
               ];
-             $keysToDeleteFromCache[] = 'search_results_' . implode('_', $parts);
+             $keysToDeleteFromCache[] = $cachePrefix.'search_results_' . implode('_', $parts);
         }
         Log::info('clearning cache for '. implode(',',$keysToDeleteFromCache));
         DB::table('cache')->whereIn('key', $keysToDeleteFromCache)->delete();
