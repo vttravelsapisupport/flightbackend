@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Registry\DestinationRegistry;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -28,13 +29,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->isLocal()) {
-            // DB::listen(function($query) {
-            //     Log::info(
-            //         $query->sql,
-            //         $query->bindings,
-            //         $query->time
-            //     );
-            // });
+                // DB::listen(function($query) {
+                //     Log::info(
+                //         $query->sql,
+                //         $query->bindings,
+                //         $query->time
+                //     );
+                // });
 
                 // DB::listen(function ($query) {
                 //     if ($this->shouldSkipLogging($query)) {
@@ -49,6 +50,7 @@ class AppServiceProvider extends ServiceProvider
         }
         else {
             \URL::forceScheme('https');
+            DestinationRegistry::load();
         }
 
 

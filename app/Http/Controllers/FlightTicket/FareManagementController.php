@@ -1,16 +1,17 @@
 <?php
 namespace App\Http\Controllers\FlightTicket;
 
-use App\Http\Controllers\Controller;
-use App\Models\FlightTicket\Owner;
-use App\Models\FlightTicket\Airline;
 use Carbon\Carbon;
-use App\Models\FlightTicket\Destination;
 use App\PurchaseEntry;
 use Illuminate\Http\Request;
-use App\Models\FlightTicket\PurchaseTicketFareLog;
+use App\Models\FlightTicket\Owner;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Models\FlightTicket\Airline;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FlightTicket\Destination;
+use App\Services\FlightPurchaseEntryService;
+use App\Models\FlightTicket\PurchaseTicketFareLog;
 
 class FareManagementController extends Controller
 {
@@ -170,7 +171,7 @@ class FareManagementController extends Controller
         $type   = $request->type;
         $status = $request->status;
         $cost_price = $request->cost_price;
-
+        $purchaseEntryUpdateList = [];
 
         if ($type) {
             if ($type == '1') {     //fixed
@@ -192,6 +193,7 @@ class FareManagementController extends Controller
                     ];
                     PurchaseTicketFareLog::create($history_data);
                     $purchase_entry = PurchaseEntry::find($purchase_entry_id);
+                    $purchaseEntryUpdateList[] = $purchase_entry;
                     $purchase_entry->update([
                         'sell_price' => $price,
                         'child' => $price
@@ -211,6 +213,7 @@ class FareManagementController extends Controller
                     ];
                     PurchaseTicketFareLog::create($history_data);
                     $purchase_entry = PurchaseEntry::find($purchase_entry_id);
+                    $purchaseEntryUpdateList[] = $purchase_entry;
                     $purchase_entry->update([
                         'sell_price' => $new_sell_price,
                         'child' => $new_sell_price
@@ -246,6 +249,7 @@ class FareManagementController extends Controller
                     ];
                     PurchaseTicketFareLog::create($history_data);
                     $purchase_entry = PurchaseEntry::find($purchase_entry_id);
+                    $purchaseEntryUpdateList[] = $purchase_entry;
                     $purchase_entry->update([
                         'sell_price' => $new_price,
                         'child' => $new_price
@@ -258,17 +262,14 @@ class FareManagementController extends Controller
                     $purchase_entry_id = $request->purchase_entry_id[$key];
                     $new_price = $val;
                     $purchase_entry = PurchaseEntry::find($purchase_entry_id);
+                    $purchaseEntryUpdateList[] = $purchase_entry;
                     $purchase_entry->update([
                         'isOnline' => $val
                     ]);
                 }
             }
         }
-
-
-
-
-
+        FlightPurchaseEntryService::clearSearchResultForCache($purchaseEntryUpdateList);
 
         return redirect()->back();
         // return redirect(route('fare-management.index'));
