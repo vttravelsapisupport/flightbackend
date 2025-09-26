@@ -570,7 +570,8 @@
  @section('js')
 
 <script src="{{ asset('js/app.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/table2csv@1.1.3/dist/table2csv.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <script type="text/javascript">
     var url = window.location.href;
     if(url.indexOf('?showIntimation') != -1) {
@@ -579,7 +580,7 @@
     </script>
 
 <script>
-    let filename = "{{ $data->pnr}}" + ".csv";
+    let filename = "{{ $data->pnr}}";
     var showError = true;
 
     $("#excelDownload").click(function () {
@@ -594,11 +595,13 @@
                 showError = false;
             }
         } else {
-            $("#employeeTable").first().table2csv({
-                filename: filename,
-                excludeRows : '.bg-info'
-            });
+              let table = document.getElementById("employeeTable");
+              // Convert HTML table to SheetJS workbook
+              let wb = XLSX.utils.table_to_book(table);
+              // Save as .xlsx file
+              XLSX.writeFile(wb, filename + ".xlsx");
         }
     });
 </script>
+
 @endsection
