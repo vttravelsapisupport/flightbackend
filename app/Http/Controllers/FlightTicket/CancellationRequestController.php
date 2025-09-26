@@ -95,7 +95,7 @@ class CancellationRequestController extends Controller
     {
         $id = $request->get('id');
         $cancelRequest = CancellationRequest::find($id);
-        $bookTicketDetails = BookTicketSummary::whereIn('id', json_decode($cancelRequest->passenger_ids))->get();
+        $bookTicketDetails = BookTicketSummary::whereIn('id', $cancelRequest->passenger_ids)->get();
         $html = view('modal.pax-details')->with('book_ticket_details', $bookTicketDetails)->render();
         return $html;
     }

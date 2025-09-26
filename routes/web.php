@@ -196,7 +196,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         // cancellation Request
         Route::get('/cancel-request/{id}', [CancellationRequestController::class, 'update']);
-        Route::get('/cancel-request-view', [CancellationRequestController::class, 'show']);
+        Route::post('/cancel-request-view', [CancellationRequestController::class, 'show']);
         Route::post('/cancel-request-remarks', [CancellationRequestController::class, 'updateRemarks'])->name('update-remarks');
         Route::post('/cancel-request-approved', [CancellationRequestController::class, 'cancelRequestApproved'])->name('request-approve');
 
@@ -240,7 +240,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/ajax/airline-details', [AjaxController::class, 'getAirlineDetails']);
 
         Route::post('agent/password/reset/{id}', [AgentController::class, 'resetPassword'])->name('agent.password.reset');
-    
+
         Route::POST('/ajax/dashboard-todolist', [DashboardController::class, 'saveDashBoardTodoList'])->name('ajax.dashboard.todolist');
         Route::POST('/ajax/dashboard-todolist-update', [DashboardController::class, 'updateDashBoardTodoList'])->name('ajax.dashboard.todolist-update');
         Route::POST('/ajax/dashboard-todolist-delete', [DashboardController::class, 'deleteDashBoardTodoList'])->name('ajax.dashboard.todolist-delete');

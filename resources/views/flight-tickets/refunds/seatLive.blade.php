@@ -301,38 +301,6 @@
         });
     });
 
-
-    // AJAX submit
-    $('#refundCancellationForm').on('submit', function(e) {
-        e.preventDefault();
-
-        let form = $(this);
-        let formData = form.serialize();
-
-        $.ajax({
-            url: form.attr('action'),
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    $('#responseMessage').html(
-                        `<div class="alert alert-success">${response.message}</div>`
-                    );
-
-                } else {
-                    $('#responseMessage').html(
-                        `<div class="alert alert-danger">${response.message}</div>`
-                    );
-                }
-            },
-            error: function(xhr) {
-                let errorMessage = xhr.responseJSON?.message || "Something went wrong!";
-                $('#responseMessage').html(
-                    `<div class="alert alert-danger">Error: ${errorMessage}</div>`
-                );
-            }
-        });
-    });
     calculatePrice();
     calculateBalance();
 

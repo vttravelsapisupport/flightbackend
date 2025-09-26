@@ -85,7 +85,7 @@ class TicketRefundController extends Controller
      */
     public function store(Request $request)
     {
-       
+
         $this->validate($request, [
             'refund'           => 'required|array',
             'ticket_id'        => 'required',
@@ -98,14 +98,14 @@ class TicketRefundController extends Controller
             'refund_pax_price' => 'required', // agent per pax price charge only adult
             'total_refund'     => 'required', // refund_pax_price * count of refund (only adult and child)
             'balance'          => 'required', // agent balance that need to be added to agent transaction and updated balance.
-            'supplier_refund_pax_price' => 'required', // supplier per pax price charge only adult 
+            'supplier_refund_pax_price' => 'required', // supplier per pax price charge only adult
             'supplier_total_refund'=> 'required', // supplier_refund_pax_price * count of refund (only adult and child)
             'supplier_balance'=> 'required' // supplier_refund_pax_price * count of refund (only adult and child)
         ]);
 
         //
-       
-      
+
+
         try {
             $old_ticket_id = Cache::get("refund_ticket_id", null);
 
@@ -119,7 +119,7 @@ class TicketRefundController extends Controller
             $ticketRefund = AirTicketRefunds::where('book_ticket_id', $request->ticket_id)
                                             ->where('passenger_ids', json_encode($request->refund))
                                             ->count();
-                           
+
             if($ticketRefund > 0) {
                 //dd($ticketRefund);
                 $request->session()->flash('error', 'Refund couldn\'t be processed now as its already refunded ... ');
@@ -183,7 +183,7 @@ class TicketRefundController extends Controller
                     'book_ticket_id' => $request->ticket_id,
                     'airline_id' => 3
                 ]);
-               
+
             }elseif($request->wallet_type == 1){
                 $account_transaction  = [
                     'agent_id'     => $request->agent_id,
@@ -204,7 +204,7 @@ class TicketRefundController extends Controller
 
             $creditResp = Credits::create($account_transaction);
 
-          
+
             $total_adult = $request->adult_count + $request->child_count;
             $purchaseEntryDetail->decrement('sold',  $total_adult);
             $purchaseEntryDetail->increment('available', $total_adult);
@@ -244,7 +244,7 @@ class TicketRefundController extends Controller
                 'reference_no' => SupplierService::generateReferenceNo(),
             ];
             $supplier_transaction_details = SupplierTransaction::create($suplier_transaction);
-           
+
             $refunds_data = [
                 'agent_id'               => $request->agent_id,
                 'book_ticket_id'         => $request->ticket_id,
@@ -317,12 +317,12 @@ class TicketRefundController extends Controller
 
         DB::beginTransaction();
         try {
-            BookTicketSummary::whereIn('id', $total_pax)->update(['is_refund' => 2]); 
+            BookTicketSummary::whereIn('id', $total_pax)->update(['is_refund' => 2]);
 
             $purchaseEntryDetail->decrement('sold', count($total_adult));
             $purchaseEntryDetail->increment('available', count($total_adult));
 
-            $cancelRequest->status = 4; 
+            $cancelRequest->status = 4;
             $cancelRequest->owner_id = $user_id;
             $cancelRequest->save();
 
@@ -353,7 +353,7 @@ class TicketRefundController extends Controller
             'refund_pax_price' => 'required', // agent per pax price charge only adult
             'total_refund'     => 'required', // refund_pax_price * count of refund (only adult and child)
             'balance'          => 'required', // agent balance that need to be added to agent transaction and updated balance.
-            'supplier_refund_pax_price' => 'required', // supplier per pax price charge only adult 
+            'supplier_refund_pax_price' => 'required', // supplier per pax price charge only adult
             'supplier_total_refund'=> 'required', // supplier_refund_pax_price * count of refund (only adult and child)
             'supplier_balance'=> 'required' // supplier_refund_pax_price * count of refund (only adult and child)
         ]);
@@ -522,41 +522,41 @@ class TicketRefundController extends Controller
     }
 
     public function RefundCancellationRequest(Request $request)
-{
-    $data = $request->all();
+    {
+        $data = $request->all();
 
-    $user = auth()->user();
-    $agent = User::where('email', $user->email)->first();
+        $user = auth()->user();
+        $agent = Agent::where('email', $user->email)->first();
 
-    if (!$agent) {
+        if (!$agent) {
+            return response()->json([
+                "success" => false,
+                "message" => "No agent found for this user email ({$user->email})"
+            ], 404);
+        }
+
+        $data['user_id'] = $user->id;
+        $data['agent_id'] = $agent->id;
+        $data['status'] = 1;
+
+        // Use refund[] checkboxes as passenger_ids
+        $data['passenger_ids'] = $request->input('refund', []);
+
+            $resp = CancellationRequest::create([
+            'book_id'       => $request->ticket_id,
+            'user_id'       => $user->id,
+            'agent_id'      => $agent->id,
+            'status'        => 1,
+            'passenger_ids' => $request->input('refund', []),
+            'agent_remarks' => $request->remarks,
+        ]);
+
+
         return response()->json([
-            "success" => false,
-            "message" => "No agent found for this user email ({$user->email})"
-        ], 404);
+            "success" => true,
+            "message" => 'Successfully created cancellation request',
+        ]);
     }
-
-    $data['user_id'] = $user->id;
-    $data['agent_id'] = $agent->id;
-    $data['status'] = 1;
-
-    // Use refund[] checkboxes as passenger_ids
-    $data['passenger_ids'] = $request->input('refund', []);
-
-        $resp = CancellationRequest::create([
-        'book_id'       => $request->ticket_id,
-        'user_id'       => $user->id,
-        'agent_id'      => $agent->id,
-        'status'        => 1,
-        'passenger_ids' => $request->input('refund', []),  
-        'agent_remarks' => $request->remarks,            
-    ]);
-
-
-    return response()->json([
-        "success" => true,
-        "message" => 'Successfully created cancellation request',
-    ]);
-}
 
 
 }
