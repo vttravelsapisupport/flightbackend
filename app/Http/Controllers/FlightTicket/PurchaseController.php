@@ -21,6 +21,7 @@ use App\Exports\PurchaseEntryPNRExport;
 use App\Models\FlightTicket\BookTicket;
 use Illuminate\Database\QueryException;
 use App\Models\FlightTicket\Destination;
+use App\Services\FlightPurchaseEntryService;
 use App\Models\FlightTicket\PurchaseEntryStatus;
 use App\Models\FlightTicket\SpiceJetPNRReconciliationDetail;
 use App\Models\FlightTicket\SpiceJetPNRReconciliationSummary;
@@ -34,7 +35,7 @@ class PurchaseController extends Controller
     public function purchaseExcelPreview(){
         return view('flight-tickets.purchase.excelPreview');
     }
-   
+
     /**
      * Display a listing of the resource.
      *
@@ -687,6 +688,7 @@ class PurchaseController extends Controller
             'isOnline' => $request->status
         ]);
 
+        FlightPurchaseEntryService::clearSearchResultForCache([$purchase]);
         return response()->json([
             'success' => true,
             'message' => 'Successfully Saved'
@@ -812,6 +814,8 @@ class PurchaseController extends Controller
         ->performedOn($purchase_entry)
         ->event('updated')
         ->log( 'PNR '.$purchase_entry->pnr. ' Price has been modified from '.$old_sale_price.' to '.$sale_price);
+
+        FlightPurchaseEntryService::clearSearchResultForCache([$purchase_entry]);
         return response()->json([
             'success' => true,
             'message' => 'Successfully Updated'
