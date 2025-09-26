@@ -18,7 +18,7 @@ class FlightPurchaseEntryService
               $parts = [
                   $sector['origin'],
                   $sector['destination'],
-                  $pe->travel_date->format('d-m-Y'),
+                  $pe->travel_date->format('Y-m-d'),
               ];
              $keysToDeleteFromCache[] = 'search_results_' . implode('_', $parts);
         }
