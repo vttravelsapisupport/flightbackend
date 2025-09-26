@@ -168,18 +168,101 @@
                             <h4>Passenger Details</h4>
                         </div>
                         <div class="col-md-6 text-right">
-                            @if($data->airline->id == 3 || $data->airline->id ==
-                            5 || $data->airline->id ==
-                            2 || $data->airline->id ==
-                            12)
+
                             <button class="btn btn-success" id="excelDownload">
                                 <i class="mdi mdi-file-excel"></i>Export Excel
                             </button>
-                            @endif
+
                         </div>
                     </div>
+                    @if($data->airline->name == 'SpiceJet')
 
-                    @if($data->airline->id == 3 || $data->airline->id == 2)
+                    <table
+                        class="table table-sm table-bordered mt-2"
+                        id="employeeTable"
+                    >
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>#</th>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>TYPE</th>
+                                <th>Contact Number</th>
+                                <th>Date of Birth (DD-MMM-YYYY)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($psg_details as $key => $val)
+                            <tr @if($val->is_refund == 2) class="bg-info" title="Seat Live" @endif >
+                                <td>{{$key + 1}}
+                                <td>
+                                    {{ $val->title }}
+                                </td>
+                                <td>
+                                    {{ $val->first_name }}
+                                </td>
+                                <td>
+                                    {{ $val->last_name }}
+                                </td>
+
+                                <td @if($val->
+                                    type == 3) style="color:red;font-weight:
+                                    600" @endif> @if($val->type == 1) ADT
+                                    @elseif($val->type == 2) CHD @else INF
+                                    @endif
+                                </td>
+                                   <td>
+                                    {{ $val->agentPhone }}
+                                </td>
+                                <td>{{  ($val->dob) ? $val->dob->format('d-M-Y') : '' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                    @elseif($data->airline->name == 'Akasa Air')
+
+                    <table
+                        class="table table-sm table-bordered mt-2"
+                        id="employeeTable"
+                    >
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>S No</th>
+                                <th>Title</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Pax Type</th>
+                                <th>DOB (dd-mmm-yyyy)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($psg_details as $key => $val)
+                            <tr @if($val->is_refund == 2) class="bg-info" title="Seat Live" @endif >
+                                <td>{{$key + 1}}
+                                <td>
+                                    {{ $val->title }}
+                                </td>
+                                <td>
+                                    {{ $val->first_name }}
+                                </td>
+                                <td>
+                                    {{ $val->last_name }}
+                                </td>
+
+                                <td @if($val->
+                                    type == 3) style="color:red;font-weight:
+                                    600" @endif> @if($val->type == 1) ADT
+                                    @elseif($val->type == 2) CHD @else INF
+                                    @endif
+                                </td>
+                                <td>{{  ($val->dob) ? $val->dob->format('d-M-Y') : '' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+
+                    @elseif($data->airline->name == 3 || $data->airline->id == 2)
                     <table
                         class="table table-sm table-bordered mt-2"
                         id="employeeTable"
